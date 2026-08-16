@@ -1,0 +1,74 @@
+@page "/"
+
+<h3>📋 Gestor de Tareas</h3>
+
+<div style="border: 1px solid #ccc; padding: 15px; border-radius: 8px; max-width: 400px; margin-bottom: 20px;">
+    <h4>Agregar Nueva Tarea</h4>
+    <input @bind="nuevaTarea.Titulo" placeholder="Título" class="form-control" style="margin-bottom: 10px;" />
+    <input @bind="nuevaTarea.Materia" placeholder="Materia" class="form-control" style="margin-bottom: 10px;" />
+    <input @bind="nuevaTarea.Fecha" type="date" class="form-control" style="margin-bottom: 10px;" />
+    <button @onclick="AgregarTarea" class="btn btn-primary">Guardar</button>
+</div>
+
+<h4>Tareas</h4>
+
+@if (tareas.Count == 0)
+{
+    <p>No hay tareas aún. ¡Agrega una!</p>
+}
+else
+{
+    <table class="table table-striped" style="max-width: 800px;">
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Materia</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var tarea in tareas)
+            {
+                <tr>
+                    <td>@tarea.Titulo</td>
+                    <td>@tarea.Materia</td>
+                    <td>@tarea.Fecha.ToString("dd/MM/yyyy")</td>
+                    <td>
+                        <button @onclick="() => EliminarTarea(tarea)" class="btn btn-danger btn-sm">Eliminar</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    public class Tarea
+    {
+        public string Titulo { get; set; } = "";
+        public string Materia { get; set; } = "";
+        public DateTime Fecha { get; set; } = DateTime.Now;
+    }
+
+    private List<Tarea> tareas = new List<Tarea>();
+    private Tarea nuevaTarea = new Tarea();
+
+    private void AgregarTarea()
+    {
+        if (!string.IsNullOrWhiteSpace(nuevaTarea.Titulo))
+        {
+            tareas.Add(new Tarea { 
+                Titulo = nuevaTarea.Titulo, 
+                Materia = nuevaTarea.Materia, 
+                Fecha = nuevaTarea.Fecha 
+            });
+            nuevaTarea = new Tarea(); // limpiar formulario
+        }
+    }
+
+    private void EliminarTarea(Tarea tarea)
+    {
+        tareas.Remove(tarea);
+    }
+}
